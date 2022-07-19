@@ -98,7 +98,7 @@
       ~~~
  
 ## Executar API
-1) Executar projeto:
+1) Executar o projeto:
 
       ~~~
       npm install
@@ -108,3 +108,5 @@
       node .\src\
       ~~~
 
+2) Urls:
+    * http://localhost:3000/compilador

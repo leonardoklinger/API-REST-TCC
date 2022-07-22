@@ -101,7 +101,7 @@
 1) Executar o projeto:
 
       ~~~
-      npm install
+      npm run dev
       ~~~
       ou
       ~~~

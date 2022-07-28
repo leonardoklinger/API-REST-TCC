@@ -1,7 +1,7 @@
 const { dadosNaoEncontrado } = require("../../services/util")
 
 class TabelaDaVerdade {
-    dados = (req, res) => {
+    compiladorResult = (req, res) => {
         const { expressaoCorreta, expressao, variaveis } = req.body
 
         if (!expressaoCorreta) {

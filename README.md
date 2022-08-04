@@ -38,9 +38,9 @@
       - [x] Gerar tabela da verdade
       - [x] Porcentagem de acertos
    - [ ] Usuários
-      - [ ] Login
+      - [x] Login
         * JWT
-      - [ ] Cadastro
+      - [x] Cadastro
         * JWT
       - [ ] Perfil
         * Redis
@@ -51,8 +51,8 @@
         * Redis
    - [x] Routes
       - [x] Compilador
-      - [ ] Login
-      - [ ] Cadastro
+      - [x] Login
+      - [x] Cadastro
       - [ ] Perfil
       - [ ] Status
       - [ ] Dashboard
@@ -65,22 +65,23 @@
          * Cache
       - [x] Util
          * Erros
-      - [ ] MongoDB
+      - [x] MongoDB
          * Models
          * Connection
    - [x] Config
       - [x] App
       - [ ] Redis
-      - [ ] MongoDB
+      - [x] MongoDB
       
 ## Bibliotecas
   - [x] Cors
-  - [ ] DotEnv
+  - [x] DotEnv
   - [ ] IoRedis
   - [x] Express
-  - [ ] Mongoose
-  - [ ] Body-parser
-  - [ ] JsonWebToken
+  - [x] Mongoose
+  - [x] Body-parser
+  - [x] JsonWebToken
+  - [x] Bcrypt
   
  ## Instalação
  1) Clone o projeto: 

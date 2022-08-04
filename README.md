@@ -111,3 +111,14 @@
 
 2) Urls:
     * http://localhost:3000/compilador
+    * http://localhost:3000/login
+        * Authorization Bearer Token
+    * http://localhost:3000/registrar
+        ~~~
+        {
+            "nome": "Seu-Nome",
+            "email": "Seu-Email@teste.com.br",
+            "senha": "Sua-Senha",
+            "confirmarSenha": "Sua-Senha"
+        }
+        ~~~

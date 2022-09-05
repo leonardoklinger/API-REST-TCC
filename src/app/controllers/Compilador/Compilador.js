@@ -1,4 +1,4 @@
-const { dadosNaoEncontrado } = require("../../services/util")
+const { dadosNaoEncontrado, dadosOk } = require("../../services/util")
 
 class TabelaDaVerdade {
     compiladorResult = (req, res) => {
@@ -16,7 +16,7 @@ class TabelaDaVerdade {
             return dadosNaoEncontrado(res, "Campo variaveis vazio!")
         }
 
-        res.status(200).json(this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
+        dadosOk(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
     }
 
     dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis) {

@@ -38,9 +38,11 @@
       - [x] Gerar tabela da verdade
       - [x] Porcentagem de acertos
    - [ ] Usuários
-      - [ ] Login
+      - [x] Login
         * JWT
-      - [ ] Cadastro
+      - [x] Cadastro
+        * JWT
+      - [x] Resetar Senha
         * JWT
       - [ ] Perfil
         * Redis
@@ -51,8 +53,9 @@
         * Redis
    - [x] Routes
       - [x] Compilador
-      - [ ] Login
-      - [ ] Cadastro
+      - [x] Login
+      - [x] Cadastro
+      - [x] Resetar Senha
       - [ ] Perfil
       - [ ] Status
       - [ ] Dashboard
@@ -65,22 +68,27 @@
          * Cache
       - [x] Util
          * Erros
-      - [ ] MongoDB
+      - [x] MongoDB
          * Models
          * Connection
+      - [x] Nodemailer
+         * Create Transporter
+         * Send E-mail
    - [x] Config
       - [x] App
-      - [ ] Redis
-      - [ ] MongoDB
       
 ## Bibliotecas
   - [x] Cors
-  - [ ] DotEnv
+  - [x] DotEnv
   - [ ] IoRedis
   - [x] Express
-  - [ ] Mongoose
-  - [ ] Body-parser
-  - [ ] JsonWebToken
+  - [x] Mongoose
+  - [x] Body-parser
+  - [x] JsonWebToken
+  - [x] Nodemailer
+  - [x] NodeMailer
+  - [x] Nodemailer-Express-Handlebars
+  - [x] Bcrypt
   
  ## Instalação
  1) Clone o projeto: 
@@ -110,3 +118,14 @@
 
 2) Urls:
     * http://localhost:3000/compilador
+    * http://localhost:3000/login
+        * Authorization Bearer Token
+    * http://localhost:3000/registrar
+        ~~~
+        {
+            "nome": "Seu-Nome",
+            "email": "Seu-Email@teste.com.br",
+            "senha": "Sua-Senha",
+            "confirmarSenha": "Sua-Senha"
+        }
+        ~~~

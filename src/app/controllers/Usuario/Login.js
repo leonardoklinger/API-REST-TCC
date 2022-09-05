@@ -1,18 +1,18 @@
-const { buscarUsuarioEspecifico } = require("../../services/Usuario/Usuario.services")
-const { errorServidor, mensagens, dadosOk, dadosNecessarios, dadosNaoEncontrado } = require("../../services/util")
+const { buscarUsuarioEspecifico } = require("../../services/DB/Usuario/Usuario.services")
+const { errorServidor, mensagens, dadosNecessarios, dadosNaoEncontrado } = require("../../services/util")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
-class TabelaDaVerdade {
+class Login {
     login = async (req, res) => {
         const { email, senha } = req.body
 
         if (!email) {
-            dadosNecessarios(res, mensagens.emailObrigatorio)
+            return dadosNecessarios(res, mensagens.emailObrigatorio)
         }
 
         if (!senha) {
-            dadosNecessarios(res, mensagens.senhaObrigatoria)
+            return dadosNecessarios(res, mensagens.senhaObrigatoria)
         }
 
         const usuarioExistente = await buscarUsuarioEspecifico(email)
@@ -28,9 +28,9 @@ class TabelaDaVerdade {
 
         try {
             const secret = process.env.SECRET
-            const token = jwt.sign({
-                id: usuarioExistente._id
-            }, secret)
+            const token = jwt.sign({id: usuarioExistente._id,}, secret, {
+                expiresIn: "10h"
+            })
             return res.status(200).json({ mensagem: mensagens.autenticacao, token })
         } catch (error) {
             return errorServidor(res, mensagens.errorNoServidor)
@@ -38,4 +38,4 @@ class TabelaDaVerdade {
     }
 }
 
-module.exports = new TabelaDaVerdade()
+module.exports = new Login()

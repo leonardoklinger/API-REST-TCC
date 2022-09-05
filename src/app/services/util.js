@@ -2,6 +2,14 @@ const dadosOk = (res, message) => {
     res.status(200).json({ mensagem: message })
 }
 
+const cadastroOk = (res, message) => {
+    res.status(201).json({ mensagem: message })
+}
+
+const dadosOkSemRetorno = (res, message) => {
+    res.status(204).json({ mensagem: message })
+}
+
 const invalido = (res, message) => {
     res.status(401).json({ mensagem: message })
 }
@@ -24,15 +32,21 @@ const mensagens = {
     errorNoServidor: "Aconteceu um erro no servidor, tente novamente mais tarde!",
     nome: "Por favor, informe um nome!",
     email: "Por favor, informe um e-mail!",
+    emailInvalido: "Por favor, informe um e-mail valido!",
+    emailNaoEncontrado: "E-mail não encontrado em nosso banco de dados!",
     senha: "Por favor, informe um senha!",
     senhaDiferentes: "Senha não coincidem!",
+    resetSenha: "Foi enviado um e-mail com os passos para resetar sua senha!",
+    confirmeSenha: "Por favor, confirme a senha!",
     emailObrigatorio: "O e-mail é obrigatório!",
     senhaObrigatoria: "O senha é obrigatória!",
     usuarioNaoEncontrado: "Usuário não encontrado!",
     senhaInvalida: "Senha inválida!",
     autenticacao: "Autenticação realizada com sucesso!",
     token: "Token inválido!",
-    tokenVazio: "Por favor, informe um token!"
+    tokenVazio: "Por favor, informe um token!",
+    tokenExpirado: "Token expirado!",
+    parametros: "Por favor, verificar parametros!"
 }
 
 module.exports = {
@@ -41,5 +55,7 @@ module.exports = {
     mensagens,
     dadosOk,
     dadosNecessarios,
-    invalido
+    invalido,
+    cadastroOk,
+    dadosOkSemRetorno
 }

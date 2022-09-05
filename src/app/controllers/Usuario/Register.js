@@ -1,8 +1,8 @@
-const { buscarUsuarioEspecifico, criarNovoUsuario } = require("../../services/Usuario/Usuario.services")
-const { dadosNaoEncontrado, errorServidor, mensagens, dadosOk, dadosNecessarios } = require("../../services/util")
+const { buscarUsuarioEspecifico, criarNovoUsuario } = require("../../services/DB/Usuario/Usuario.services")
+const { dadosNaoEncontrado, errorServidor, mensagens, cadastroOk, dadosNecessarios } = require("../../services/util")
 const bcrypt = require("bcrypt")
 
-class TabelaDaVerdade {
+class Registrar {
     registrar = async (req, res) => {
         const { nome, email, senha, confirmarSenha } = req.body
         const usuarioExistente = await buscarUsuarioEspecifico(email)
@@ -31,11 +31,11 @@ class TabelaDaVerdade {
 
         try {
             await criarNovoUsuario(nome, email, criptografiaSenhaHash)
-            return dadosOk(res, mensagens.userCriadoComSucesso)
+            return cadastroOk(res, mensagens.userCriadoComSucesso)
         } catch (error) {
             return errorServidor(res, mensagens.errorNoServidor)
         }
     }
 }
 
-module.exports = new TabelaDaVerdade()
+module.exports = new Registrar()

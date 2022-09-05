@@ -41,8 +41,11 @@
       - [x] Login
         * JWT
       - [x] Cadastro
+<<<<<<< HEAD
         * JWT
       - [x] Resetar Senha
+=======
+>>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
         * JWT
       - [ ] Perfil
         * Redis
@@ -55,7 +58,10 @@
       - [x] Compilador
       - [x] Login
       - [x] Cadastro
+<<<<<<< HEAD
       - [x] Resetar Senha
+=======
+>>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
       - [ ] Perfil
       - [ ] Status
       - [ ] Dashboard
@@ -76,6 +82,11 @@
          * Send E-mail
    - [x] Config
       - [x] App
+<<<<<<< HEAD
+=======
+      - [ ] Redis
+      - [x] MongoDB
+>>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
       
 ## Bibliotecas
   - [x] Cors
@@ -85,9 +96,12 @@
   - [x] Mongoose
   - [x] Body-parser
   - [x] JsonWebToken
+<<<<<<< HEAD
   - [x] Nodemailer
   - [x] NodeMailer
   - [x] Nodemailer-Express-Handlebars
+=======
+>>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
   - [x] Bcrypt
   
  ## Instalação

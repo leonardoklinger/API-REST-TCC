@@ -1,8 +1,8 @@
-const { resetSenhaUsuario, buscarUsuarioEspecifico } = require("../../services/DB/Usuario/Usuario.services")
+const { resetSenhaUsuario, buscarUsuarioEspecifico } = require("../../modules/Usuarios/repositories/Usuario.repository")
 const { dadosNaoEncontrado, mensagens, dadosOk, dadosNecessarios, invalido, errorServidor } = require("../../services/util")
+const { enviadorEmail } = require("../../services/Email/Email.services")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const { enviarEmail } = require("../../services/Email/Email.services")
 
 class ResetarSenha {
     gerarUrl = async (req, res) => {
@@ -16,7 +16,7 @@ class ResetarSenha {
                 expiresIn: "5m"
             })
 
-            await enviarEmail(email, "resetSenha", `${process.env.URL_FRONT_END}${token}`,"Você solicitou a redefinição de sua senha", `Olá ${usuarioExistente.nome}, você está precisando de ajuda com sua senha? Bem, click no botão abaixo para resetar sua senha \nOps: você tem 5 minutos para resetar a sua senha antes que o token fique inválido !`)
+            await enviadorEmail(email, "resetSenha", `${process.env.URL_FRONT_END}${token}`,"Você solicitou a redefinição de sua senha", `Olá ${usuarioExistente.nome}, você está precisando de ajuda com sua senha? Bem, click no botão abaixo para resetar sua senha \nOps: você tem 5 minutos para resetar a sua senha antes que o token fique inválido !`)
             return dadosOk(res, { mensagem: mensagens.resetSenha })
         } catch (error) {
             console.log(error)
@@ -41,7 +41,7 @@ class ResetarSenha {
         }
 
         try {
-            const dados = await jwt.verify(token, process.env.SENHA_EMAIL)
+            const dados = jwt.verify(token, process.env.SENHA_EMAIL)
             const criptografiaSenhaSalt = await bcrypt.genSalt(12)
             const criptografiaSenhaHash = await bcrypt.hash(senha, criptografiaSenhaSalt)
             let dadosUser = await buscarUsuarioEspecifico(dados.email,)

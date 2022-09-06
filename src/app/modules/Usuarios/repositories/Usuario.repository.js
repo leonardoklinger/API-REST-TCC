@@ -1,4 +1,4 @@
-const UsuarioModel = require("../../../model/Usuario.model")
+const UsuarioModel = require("../model/Usuario.model")
 
 const buscarUsuarioEspecifico = async (email) => {
     let usuario = null

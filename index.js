@@ -1,12 +1,8 @@
 require("dotenv").config()
+require("./src/config/DB/Conexao.config").conectar()
 const { server } = require("./src/config/app")
-const conexaoBancoDeDados = require("./src/config/DB/Conexao")
-conexaoBancoDeDados()
+const port = process.env.PORT | 3000
 
-try {
-    server.listen(3000, () => {
-        console.log(`Api ligada com sucesso na porta 3000`)
-    })
-} catch (error) {
-    console.log(error)
-}
+server.listen(port, () => {
+    console.log(`Api ligada com sucesso na porta ${port}`)
+})

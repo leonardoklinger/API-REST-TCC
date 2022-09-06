@@ -1,4 +1,4 @@
-const { buscarUsuarioEspecifico } = require("../../services/DB/Usuario/Usuario.services")
+const { buscarUsuarioEspecifico } = require("../../modules/Usuarios/repositories/Usuario.repository")
 const { errorServidor, mensagens, dadosNecessarios, dadosNaoEncontrado } = require("../../services/util")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")

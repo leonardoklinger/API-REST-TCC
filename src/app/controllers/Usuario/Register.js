@@ -1,4 +1,4 @@
-const { buscarUsuarioEspecifico, criarNovoUsuario } = require("../../services/DB/Usuario/Usuario.services")
+const { buscarUsuarioEspecifico, criarNovoUsuario } = require("../../modules/Usuarios/repositories/Usuario.repository")
 const { dadosNaoEncontrado, errorServidor, mensagens, cadastroOk, dadosNecessarios } = require("../../services/util")
 const bcrypt = require("bcrypt")
 

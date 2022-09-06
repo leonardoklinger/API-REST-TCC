@@ -11,6 +11,7 @@
     <img align="center" alt="Redis" src="https://img.shields.io/badge/Redis-D9281A?style=for-the-badge&logo=redis&logoColor=white" />
     <img align="center" alt="JWT" src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" />
     <img align="center" alt="ApiRest" src="https://img.shields.io/badge/API%20REST-B50BEC?style=for-the-badge&logo=apirest&logoColor=white" />
+    <img align="center" alt="Docker" src="	https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
 </div><br/>
 
 ## Platorma
@@ -28,6 +29,7 @@
   * NodeJs
   * Redis
   * MongoDB
+  * Docker
 
 ## Features
 - [x] Gerador tabela da verdade (Compilador)
@@ -41,11 +43,8 @@
       - [x] Login
         * JWT
       - [x] Cadastro
-<<<<<<< HEAD
         * JWT
       - [x] Resetar Senha
-=======
->>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
         * JWT
       - [ ] Perfil
         * Redis
@@ -54,39 +53,32 @@
         * Redis
       - [ ] Posição atual
         * Redis
-   - [x] Routes
-      - [x] Compilador
-      - [x] Login
-      - [x] Cadastro
-<<<<<<< HEAD
-      - [x] Resetar Senha
-=======
->>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
-      - [ ] Perfil
-      - [ ] Status
-      - [ ] Dashboard
-      - [ ] Top Ranks
-      - [ ] Posição atual
-   - [x] Services
-      - [ ] Redis
-         * Models
-         * Connection
-         * Cache
-      - [x] Util
-         * Erros
-      - [x] MongoDB
-         * Models
-         * Connection
-      - [x] Nodemailer
-         * Create Transporter
-         * Send E-mail
-   - [x] Config
-      - [x] App
-<<<<<<< HEAD
-=======
-      - [ ] Redis
-      - [x] MongoDB
->>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
+  - [x] Routes
+    - [x] Compilador
+    - [x] Login
+    - [x] Cadastro
+    - [x] Resetar Senha
+    - [ ] Perfil
+    - [ ] Status
+    - [ ] Dashboard
+    - [ ] Top Ranks
+    - [ ] Posição atual
+  - [x] Services
+    - [ ] Redis
+        * Models
+        * Connection
+        * Cache
+    - [x] Util
+        * Erros
+    - [x] MongoDB
+        * Models
+        * Connection
+    - [x] Nodemailer
+        * Create Transporter
+        * Send E-mail
+    - [x] Docker
+  - [x] Config
+    - [x] App
       
 ## Bibliotecas
   - [x] Cors
@@ -96,12 +88,9 @@
   - [x] Mongoose
   - [x] Body-parser
   - [x] JsonWebToken
-<<<<<<< HEAD
   - [x] Nodemailer
   - [x] NodeMailer
   - [x] Nodemailer-Express-Handlebars
-=======
->>>>>>> 71e3b088313b358a7859b839f43a63e06b68ad2b
   - [x] Bcrypt
   
  ## Instalação

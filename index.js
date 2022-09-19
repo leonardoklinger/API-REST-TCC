@@ -1,4 +1,4 @@
-require("dotenv").config()
+//require("dotenv").config()
 require("./src/config/DB/Conexao.config").conectar()
 const { server } = require("./src/config/app")
 const port = process.env.PORT || 3000

@@ -2,21 +2,25 @@ const { dadosNaoEncontrado, dadosOk } = require("../../services/util")
 
 class TabelaDaVerdade {
     compiladorResult = (req, res) => {
-        const { expressaoCorreta, expressao, variaveis } = req.body
+        try {
+            const { expressaoCorreta, expressao, variaveis } = req.body
 
-        if (!expressaoCorreta) {
-            return dadosNaoEncontrado(res, "Campo expressaoCorreta vazio!")
+            if (!expressaoCorreta) {
+                return dadosNaoEncontrado(res, "Campo expressaoCorreta vazio!")
+            }
+
+            if (!expressao) {
+                return dadosNaoEncontrado(res, "Campo expressao vazio!")
+            }
+
+            if (!variaveis) {
+                return dadosNaoEncontrado(res, "Campo variaveis vazio!")
+            }
+
+            dadosOk(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
+        } catch (error) {
+            res.status(500).json(error)
         }
-
-        if (!expressao) {
-            return dadosNaoEncontrado(res, "Campo expressao vazio!")
-        }
-
-        if (!variaveis) {
-            return dadosNaoEncontrado(res, "Campo variaveis vazio!")
-        }
-
-        dadosOk(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
     }
 
     dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis) {

@@ -1,10 +1,10 @@
 version: '3.1'
-
+  
 services:
 
-  db:
+  MongoDB:
     image: mongo
-    container_name: db
+    container_name: MongoDB
     restart: always
     ports:
       - ${DB_PORT}:27017

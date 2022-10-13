@@ -1,13 +1,12 @@
 const mongoose = require("mongoose")
-const { URL_MONGODB, DB_PORT } = process.env
-//const MONGO_DB_URL = `mongodb://${DB_HOSTNAME}/${DB_PORT}`
+const variaveis = require("../Ambiente/start")
 
 class conexaoMongoDB {
     conectar() {
-        mongoose.connect(URL_MONGODB, {
+        mongoose.connect(variaveis.URL_MONGODB, {
             useNewUrlParser: true,
             useUnifiedTopology: true
-        }).then(() => console.log("MongoDB conectado com sucesso"))
+        }).then(() => console.log(variaveis.MONGODB_MENSAGEM))
             .catch((error) => console.error(error))
     }
 }

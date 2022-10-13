@@ -1,29 +1,32 @@
-const dadosOk = (res, message) => {
-    res.status(200).json({ mensagem: message })
-}
+class resMensagens {
 
-const cadastroOk = (res, message) => {
-    res.status(201).json({ mensagem: message })
-}
+    dadosSucesso(res, message) {
+        res.status(200).json(message)
+    }
 
-const dadosOkSemRetorno = (res, message) => {
-    res.status(204).json({ mensagem: message })
-}
+    cadastroSucesso(res, message) {
+        res.status(201).json(message)
+    }
 
-const invalido = (res, message) => {
-    res.status(401).json({ mensagem: message })
-}
+    dadosSucessoSemRetorno(res, message) {
+        res.status(204).json(message)
+    }
 
-const dadosNaoEncontrado = (res, message) => {
-    res.status(404).json({ mensagem: message })
-}
+    naoAutorizado(res, message) {
+        res.status(401).json(message)
+    }
 
-const dadosNecessarios = (res, message) => {
-    res.status(422).json({ mensagem: message })
-}
+    dadosNaoEncontrado(res, message) {
+        res.status(404).json(message)
+    }
 
-const errorServidor = (res, message) => {
-    res.status(500).json({ mensagem: message })
+    dadosNecessarios(res, message) {
+        res.status(422).json(message)
+    }
+
+    errorNoServidor(res, message) {
+        res.status(500).json(message)
+    }
 }
 
 const mensagens = {
@@ -46,16 +49,13 @@ const mensagens = {
     token: "Token inválido!",
     tokenVazio: "Por favor, informe um token!",
     tokenExpirado: "Token expirado!",
-    parametros: "Por favor, verificar parametros!"
+    parametros: "Por favor, verificar parametros!",
+    informeUmLevel: "Por favor, informe um level!",
+    informePorcentagemDeAcertos: "Por favor, informe a porcentagem de acertos!",
+    idUser: "Por favor, informe o id do usuário!",
+    usuarioSemPontuacao: "Usuário não tem nenhuma pontuação!",
+    idInformado: "Id informado é inválido!",
+    pontuacaoAtualizada: "Pontuação atualizada com sucesso"
 }
 
-module.exports = {
-    dadosNaoEncontrado,
-    errorServidor,
-    mensagens,
-    dadosOk,
-    dadosNecessarios,
-    invalido,
-    cadastroOk,
-    dadosOkSemRetorno
-}
+module.exports = { resMensagens, mensagens }

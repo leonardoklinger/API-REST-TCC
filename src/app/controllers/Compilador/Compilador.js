@@ -1,4 +1,4 @@
-const { dadosNaoEncontrado, dadosOk } = require("../../services/util")
+const { resMensagens } = require("../../services/util")
 
 class TabelaDaVerdade {
     compiladorResult = (req, res) => {
@@ -17,7 +17,7 @@ class TabelaDaVerdade {
                 return dadosNaoEncontrado(res, "Campo variaveis vazio!")
             }
 
-            dadosOk(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
+            new resMensagens().dadosSucesso(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
         } catch (error) {
             res.status(500).json(error)
         }
@@ -32,17 +32,17 @@ class TabelaDaVerdade {
         let expressaoArray = expressao.split(","),
             variaveisArray = variaveis.split(",")
 
-        var variaveisArrumadas,
+        let variaveisArrumadas,
             arrayVerdadeiras = [],
             proposicoesData = []
 
         proposicoesData.push(this.proposicoes(variaveisArray, variaveisArray, true))
-        for (var i = 1; i <= Math.round(variaveisArray.length / 2); i++) {
+        for (let i = 1; i <= Math.round(variaveisArray.length / 2); i++) {
             variaveisArrumadas = this.possiveisCombinacoes(variaveisArray, i)
             variaveisArrumadas.forEach((proposicoesSrc) => {
                 arrayVerdadeiras = this.proposicoes(variaveisArray, proposicoesSrc)
                 proposicoesData.push(arrayVerdadeiras)
-            });
+            })
         }
 
         proposicoesData.push(this.proposicoes(variaveisArray, variaveisArray))
@@ -50,19 +50,19 @@ class TabelaDaVerdade {
     }
 
     proposicoes(variaveis, tabelaVerdade, reverter) {
-        var w = {};
-        variaveis.forEach(v => w[v] = (tabelaVerdade.indexOf(v) >= 0 ? true : false) ^ reverter);
-        return w;
+        let w = {}
+        variaveis.forEach(v => w[v] = (tabelaVerdade.indexOf(v) >= 0 ? true : false) ^ reverter)
+        return w
     }
 
     possiveisCombinacoes(variaveis, i) {
-        let combinations = [];
+        let combinations = []
         if (i <= 1) {
             return variaveis
         } else {
             for (let i = 0; i < variaveis.length; ++i) {
                 for (let j = i + 1; j < variaveis.length; ++j) {
-                    combinations.push([variaveis[i], variaveis[j]]);
+                    combinations.push([variaveis[i], variaveis[j]])
                 }
             }
         }
@@ -73,13 +73,13 @@ class TabelaDaVerdade {
         let resultadoExpressao = []
         proposicoesData.forEach((v) => {
             let i = 0
-            let valores = [];
-            let variaveisReformulada = [];
+            let valores = []
+            let variaveisReformulada = []
 
             for (i in v) {
                 valores.push(v[i]);
-                variaveisReformulada.push(i);
-            };
+                variaveisReformulada.push(i)
+            }
 
             resultado(variaveisReformulada, valores, expressao, resultadoExpressao)
         })
@@ -93,13 +93,13 @@ class TabelaDaVerdade {
             if (element === repostaCorreta.resultadoExpressaoTable[index]) {
                 valor++
             }
-        });
+        })
         return Object.assign({}, objeto, { porcentagemDeAcertos: Math.round(valor * 100 / repostaCorreta.resultadoExpressaoTable.length) })
     }
 }
 
 function resultado(variaveisReformulada, valores, expressao, resultadoExpressao) { //Tiver que utilizar por conta que o eval não era reconhecido na metodo class !
-    for (var i = 0; i < variaveisReformulada.length; i++) {
+    for (let i = 0; i < variaveisReformulada.length; i++) {
         eval(`var ${variaveisReformulada[i]} = ${valores[i]};`)
     }
 

@@ -1,4 +1,5 @@
 const { transporter } = require("../../../config/Email/Email.config")
+const variaveis = require("../../../config/Ambiente/start")
 const path = require("path")
 const hbs = require("nodemailer-express-handlebars")
 
@@ -10,7 +11,7 @@ class Email {
 
     async enviadorEmail(emailDestino, template, token, titulo, texto) {
         let dados = {
-            from: `Lógica proposicional <${process.env.EMAIL_EMAIL}>`,
+            from: `Lógica proposicional <${variaveis.EMAIL_EMAIL}>`,
             to: emailDestino,
             subject: titulo,
             template: template,

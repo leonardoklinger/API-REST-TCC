@@ -1,6 +1,6 @@
 {
     "versao": "Beta",
     "env": {
-        "environment": "dev"
+        "environment": "prod"
     }
 }

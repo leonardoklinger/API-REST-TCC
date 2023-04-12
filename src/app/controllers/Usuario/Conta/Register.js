@@ -2,7 +2,6 @@ const { buscarUsuarioEspecifico, criarNovoUsuario } = require("../../../modules/
 const { mensagens, resMensagens } = require("../../../services/util")
 const bcrypt = require("bcrypt")
 
-
 const { UsuarioModelClass } = require("../../../modules/Usuarios/model/Usuario.Model.Class")
 const retornoMessage = new resMensagens()
 

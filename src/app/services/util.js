@@ -8,8 +8,8 @@ class resMensagens {
         res.status(201).json(message)
     }
 
-    dadosSucessoSemRetorno(res, message) {
-        res.status(204).json(message)
+    dadosSucessoSemRetorno(res) {
+        res.status(204).json()
     }
 
     naoAutorizado(res, message) {
@@ -55,7 +55,18 @@ const mensagens = {
     idUser: "Por favor, informe o id do usuário!",
     usuarioSemPontuacao: "Usuário não tem nenhuma pontuação!",
     idInformado: "Id informado é inválido!",
-    pontuacaoAtualizada: "Pontuação atualizada com sucesso"
+    pontuacaoAtualizada: "Pontuação atualizada com sucesso",
+    atividadeNivel: "Por favor, informe uma atividade",
+    variaveisNivel: "Por favor, informe suas variaveis",
+    dificuldadeNivel: "Por favor, informe qual será a dificuldade da sua ativadade de 1 à 3",
+    sequenciaCorretaNivel: "Por favor, informe a sequência correta da sua atividade",
+    sequenciaCorretaNivel: "Por favor, informe a sequência correta da sua atividade",
+    autorNivel: "Autor não encontrado",
+    nivelCriado: "Nível criado com sucesso. Aguarde seu nível ser liberado pelos administradores do sistema.",
+    problemaNaCriacaoNivel: "Ops: encontramos algum problema na criação do seu nível, por favor, entrem em contato com o administrador",
+    idNivel: "Id do nível não informado",
+    idNivelNaoEncontrado: "Id informado não foi encontrado",
+    todosNiveis: "Houve algum problema em buscar todos os níveis. Por favor contate o administrador."
 }
 
 module.exports = { resMensagens, mensagens }

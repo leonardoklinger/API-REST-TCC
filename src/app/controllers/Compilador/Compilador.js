@@ -1,4 +1,5 @@
 const { resMensagens } = require("../../services/util")
+const { dadosNaoEncontrado } = new resMensagens()
 
 class TabelaDaVerdade {
     compiladorResult = (req, res) => {
@@ -19,6 +20,7 @@ class TabelaDaVerdade {
 
             new resMensagens().dadosSucesso(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
         } catch (error) {
+            console.log(error);
             res.status(500).json(error)
         }
     }
@@ -103,9 +105,13 @@ function resultado(variaveisReformulada, valores, expressao, resultadoExpressao)
         eval(`var ${variaveisReformulada[i]} = ${valores[i]};`)
     }
 
-    expressao.forEach((v) => {
-        resultadoExpressao.push(eval(v) == 1 ? "V" : "F")
-    })
+    try {
+        expressao.forEach((v) => {
+            resultadoExpressao.push(eval(v) == 1 ? "V" : "F")
+        })
+    } catch (error) {
+        return error
+    }
 }
 
 module.exports = new TabelaDaVerdade()

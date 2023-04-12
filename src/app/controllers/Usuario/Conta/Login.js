@@ -12,7 +12,7 @@ class Login extends UsuarioModelClass {
         const { email, senha } = req.body
 
         const validacao = this.validacoes(true, email, senha, true, mensagens)
-        if(validacao) return retornoMessage.dadosNaoEncontrado(res, validacao)
+        if (validacao) return retornoMessage.dadosNaoEncontrado(res, validacao)
 
         const usuarioExistente = await buscarUsuarioEspecifico(email)
         if (!usuarioExistente) {
@@ -21,7 +21,7 @@ class Login extends UsuarioModelClass {
 
         const checkarSenha = await bcrypt.compare(senha, usuarioExistente.senha)
         if (!checkarSenha) {
-            return retornoMessage.dadosNecessarios(res, mensagens.senhaInvalida)
+            return retornoMessage.naoAutorizado(res, mensagens.senhaInvalida)
         }
 
         try {
@@ -29,6 +29,7 @@ class Login extends UsuarioModelClass {
             const token = jwt.sign({ id: usuarioExistente._id, }, secret, {
                 expiresIn: "10h"
             })
+            
             return retornoMessage.dadosSucesso(res, { message: mensagens.autenticacao, token: token, id: usuarioExistente._id })
         } catch (error) {
             return errorServidor(res, mensagens.errorNoServidor)

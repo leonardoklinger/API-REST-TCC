@@ -15,7 +15,7 @@ class middleware {
                 return retornoMessage.naoAutorizado(res, mensagens.token)
             }
             return next()
-        });
+        })
     }
 }
 

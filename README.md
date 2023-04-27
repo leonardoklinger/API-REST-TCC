@@ -42,29 +42,39 @@
    - [ ] Usuários
       - [x] Login
         * JWT
+        * MONGODB
       - [x] Cadastro
         * JWT
+        * MONGODB
       - [x] Resetar Senha
         * JWT
+        * REDIS
+        * MONGODB
       - [ ] Perfil
         * Redis
+        * MONGODB
+      - [x] Criação de Níveis
+        * MONGODB
    - [ ] Dashboard
       - [ ] Top Ranks
         * Redis
+        * MONGODB
       - [ ] Posição atual
         * Redis
+        * MONGODB
   - [x] Routes
     - [x] Compilador
     - [x] Login
     - [x] Cadastro
     - [x] Resetar Senha
+    - [x] Criação de Níveis
     - [ ] Perfil
     - [ ] Status
     - [ ] Dashboard
     - [ ] Top Ranks
     - [ ] Posição atual
   - [x] Services
-    - [ ] Redis
+    - [x] Redis
         * Models
         * Connection
         * Cache
@@ -83,7 +93,7 @@
 ## Bibliotecas
   - [x] Cors
   - [x] DotEnv
-  - [ ] IoRedis
+  - [x] IoRedis
   - [x] Express
   - [x] Mongoose
   - [x] Body-parser

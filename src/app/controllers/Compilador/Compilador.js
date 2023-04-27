@@ -1,8 +1,13 @@
 const { resMensagens } = require("../../services/util")
-const { dadosNaoEncontrado } = new resMensagens()
+const { dadosSucesso, dadosNaoEncontrado } = new resMensagens()
 
 class TabelaDaVerdade {
-    compiladorResult = (req, res) => {
+    constructor() {
+        this.variaveis = []
+        this.expressoes = []
+    }
+
+    resultado = (req, res) => {
         try {
             const { expressaoCorreta, expressao, variaveis } = req.body
 
@@ -18,99 +23,89 @@ class TabelaDaVerdade {
                 return dadosNaoEncontrado(res, "Campo variaveis vazio!")
             }
 
-            new resMensagens().dadosSucesso(res, this.dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis))
+            dadosSucesso(res, this.porcentagemDeAcertos(expressaoCorreta, variaveis, expressao))
         } catch (error) {
-            console.log(error);
-            res.status(500).json(error)
+            res.status(500)
+            throw new Error(error)
         }
     }
 
-    dadosFinaisComPorcentagemDeAcertos(expressaoCorreta, expressao, variaveis) {
-        let arrayNivelAtualizado = this.compilador(expressaoCorreta, variaveis)
-        return this.resultadoPorcentagemDeAcertos(arrayNivelAtualizado, this.compilador(expressao, variaveis))
+    compilador = (variaveis, expressao) => {
+        let copiaVariavel = variaveis.slice()
+
+        variaveis.forEach(variavel => {
+            if(!(expressao.includes(variavel))) {
+                copiaVariavel.splice(variaveis.indexOf(variavel), 1)
+            }
+        })
+
+        const expressions = [expressao];
+        const functionsByExpr = Object.fromEntries(expressions.map(expr =>
+          [expr, new Function(...copiaVariavel, `return ${expr};`)]
+        ));
+        
+        const rows = [];
+        for (let i = 0; i < (1 << copiaVariavel.length); i++) {
+          const entries = copiaVariavel.map((name, j) =>
+            [name, (i >>> j) & 1 == 1]
+          );
+          const values = entries.map(e => e[1]);
+          const obj = Object.fromEntries(entries);
+          for (const expr of expressions) {
+            obj[expr] = functionsByExpr[expr](...values);
+          }
+          rows.push(obj);
+        }
+        
+        return this.montarTabelaDaVerdade(copiaVariavel, expressions, rows)
     }
 
-    compilador(expressao, variaveis) {
-        let expressaoArray = expressao.split(","),
-            variaveisArray = variaveis.split(",")
+    montarTabelaDaVerdade = (copiaVariavel, expressions, rows) => {
+        this.variaveis = []
+        this.expressoes = []
 
-        let variaveisArrumadas,
-            arrayVerdadeiras = [],
-            proposicoesData = []
-
-        proposicoesData.push(this.proposicoes(variaveisArray, variaveisArray, true))
-        for (let i = 1; i <= Math.round(variaveisArray.length / 2); i++) {
-            variaveisArrumadas = this.possiveisCombinacoes(variaveisArray, i)
-            variaveisArrumadas.forEach((proposicoesSrc) => {
-                arrayVerdadeiras = this.proposicoes(variaveisArray, proposicoesSrc)
-                proposicoesData.push(arrayVerdadeiras)
-            })
+        for (const row of rows) {
+          const cell = c => (row[c]?'T':'F')
+          this.variaveis.push(...copiaVariavel.map(cell))
+          this.expressoes.push(...expressions.map(cell))
         }
 
-        proposicoesData.push(this.proposicoes(variaveisArray, variaveisArray))
-        return this.construcaoMatrizTabelaDaVerdade(proposicoesData, variaveisArray, expressaoArray)
+        return { variaveis: this.variaveis, expressoes: this.expressoes }
     }
 
-    proposicoes(variaveis, tabelaVerdade, reverter) {
-        let w = {}
-        variaveis.forEach(v => w[v] = (tabelaVerdade.indexOf(v) >= 0 ? true : false) ^ reverter)
-        return w
+    porcentagemDeAcertos = (expressaoCorreta, variaveis, expressaoUsuario) => {
+        const resultadoCorreto = this.compilador(variaveis, expressaoCorreta)
+        const resultadoUsuario = this.compilador(variaveis, expressaoUsuario)
+        return Object.assign({}, resultadoUsuario, this.calcularPorcentagemDeAcerto(resultadoCorreto, resultadoUsuario, expressaoUsuario, expressaoCorreta))
     }
 
-    possiveisCombinacoes(variaveis, i) {
-        let combinations = []
-        if (i <= 1) {
-            return variaveis
-        } else {
-            for (let i = 0; i < variaveis.length; ++i) {
-                for (let j = i + 1; j < variaveis.length; ++j) {
-                    combinations.push([variaveis[i], variaveis[j]])
-                }
-            }
-        }
-        return combinations
-    }
+    calcularPorcentagemDeAcerto = (resultadoUser, resultadoCorreto, expressaoUsuario, expressaoCorreta) => {
+        let pontuacaoExpressao = 0
+        let pontuacaoVariaveis = 0
 
-    construcaoMatrizTabelaDaVerdade(proposicoesData, variaveis, expressao) {
-        let resultadoExpressao = []
-        proposicoesData.forEach((v) => {
-            let i = 0
-            let valores = []
-            let variaveisReformulada = []
-
-            for (i in v) {
-                valores.push(v[i]);
-                variaveisReformulada.push(i)
-            }
-
-            resultado(variaveisReformulada, valores, expressao, resultadoExpressao)
-        })
-
-        return { proposicoesTable: proposicoesData, variaveisTable: variaveis, expressaoTable: expressao, resultadoExpressaoTable: resultadoExpressao }
-    }
-
-    resultadoPorcentagemDeAcertos(repostaCorreta, objeto) {
-        let valor = 0
-        objeto.resultadoExpressaoTable.forEach((element, index) => {
-            if (element === repostaCorreta.resultadoExpressaoTable[index]) {
-                valor++
+        resultadoUser.expressoes.forEach((resultado, index) => {
+            if(resultado === resultadoCorreto.expressoes[index]) {
+                pontuacaoExpressao++
             }
         })
-        return Object.assign({}, objeto, { porcentagemDeAcertos: Math.round(valor * 100 / repostaCorreta.resultadoExpressaoTable.length) })
-    }
-}
 
-function resultado(variaveisReformulada, valores, expressao, resultadoExpressao) { //Tiver que utilizar por conta que o eval não era reconhecido na metodo class !
-    for (let i = 0; i < variaveisReformulada.length; i++) {
-        eval(`var ${variaveisReformulada[i]} = ${valores[i]};`)
-    }
-
-    try {
-        expressao.forEach((v) => {
-            resultadoExpressao.push(eval(v) == 1 ? "V" : "F")
+        resultadoUser.variaveis.forEach((resultado, index) => {
+            if(resultado === resultadoCorreto.variaveis[index]) {
+                pontuacaoVariaveis++
+            }
         })
-    } catch (error) {
-        return error
+
+        const pontuacaoExpressaoCorreta = expressaoCorreta.split(" ")
+        const pontuacaoExpressaoUsuario = expressaoUsuario.split(" ")
+        let pontuacaoTotalFeitaUsuario = 0
+
+        pontuacaoExpressaoCorreta.forEach((resultado, index) => {
+            if(resultado === pontuacaoExpressaoUsuario[index]) {
+                pontuacaoTotalFeitaUsuario++
+            }
+        })
+
+        return { porcentagemDeAcertosUsuario: Math.round((pontuacaoExpressao + pontuacaoVariaveis + pontuacaoTotalFeitaUsuario) * 100 / (resultadoCorreto.expressoes.length + resultadoCorreto.variaveis.length + pontuacaoExpressaoCorreta.length)) }
     }
 }
 

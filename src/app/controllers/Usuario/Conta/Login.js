@@ -1,11 +1,12 @@
-const { buscarUsuarioEspecifico } = require("../../../modules/Usuarios/repositories/Usuario.repository")
-const { mensagens, resMensagens } = require("../../../services/util")
+const { buscarUsuarioEspecificoEmail } = require("../../../modules/Usuarios/repositories/Usuario.repository")
+const { mensagens, resMensagens, Servico } = require("../../../services/util")
 const variaveis = require("../../../../config/Ambiente/start")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
 const { UsuarioModelClass } = require("../../../modules/Usuarios/model/Usuario.Model.Class")
 const retornoMessage = new resMensagens()
+const servico = new Servico()
 
 class Login extends UsuarioModelClass {
     login = async (req, res) => {
@@ -14,25 +15,25 @@ class Login extends UsuarioModelClass {
         const validacao = this.validacoes(true, email, senha, true, mensagens)
         if (validacao) return retornoMessage.dadosNaoEncontrado(res, validacao)
 
-        const usuarioExistente = await buscarUsuarioEspecifico(email)
+        const usuarioExistente = await buscarUsuarioEspecificoEmail(email)
         if (!usuarioExistente) {
             return retornoMessage.dadosNaoEncontrado(res, mensagens.usuarioNaoEncontrado)
         }
-
-        const checkarSenha = await bcrypt.compare(senha, usuarioExistente.senha)
-        if (!checkarSenha) {
+        
+        if (!await servico.checkarSenha(senha, usuarioExistente.senha)) {
             return retornoMessage.naoAutorizado(res, mensagens.senhaInvalida)
         }
 
         try {
+            const usuarioAdmin = usuarioExistente.admin ? true : false
             const secret = variaveis.SECRET
-            const token = jwt.sign({ id: usuarioExistente._id, }, secret, {
+            const token = jwt.sign({ id: usuarioExistente._id, admin: usuarioAdmin }, secret, {
                 expiresIn: "10h"
             })
             
             return retornoMessage.dadosSucesso(res, { message: mensagens.autenticacao, token: token, id: usuarioExistente._id })
         } catch (error) {
-            return errorServidor(res, mensagens.errorNoServidor)
+            return retornoMessage.errorNoServidor(res, mensagens.errorNoServidor)
         }
     }
 }

@@ -15,10 +15,11 @@ class pontuacaoRepository {
         })
     }
 
-    cadastrarPontuacaoUser = async (_id, level) => {
+    cadastrarPontuacaoUser = async (_id, level, pontuacao) => {
         const pontuacaoUserCadastrar = new PontuacaoUser({
             _id: _id,
-            level: level
+            level: level,
+            pontuacao: pontuacao
         })
 
         return new Promise(async (resolve, reject) => {
@@ -33,13 +34,23 @@ class pontuacaoRepository {
         })
     }
 
-    updatePontuacaoUser = async (_id, level) => {
+    updatePontuacaoUser = async (_id, level, pontuacao) => {
         return new Promise(async (resolve, reject) => {
             if (!Types.ObjectId.isValid(_id)) return reject(mensagens.idInformado)
-
             try {
-                let updateDados = await PontuacaoUser.updateOne({ _id: _id }, { $push:{ level: level }})
+                let updateDados = await PontuacaoUser.updateOne({ _id: _id }, { pontuacao: pontuacao, $push:{ level: level }})
                 resolve(updateDados)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    excluirUsuarioPontuacao = async (_id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const dados = await PontuacaoUser.deleteOne({ _id: _id })
+                resolve(dados)
             } catch (error) {
                 reject(error)
             }

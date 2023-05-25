@@ -1,5 +1,6 @@
-class resMensagens {
+const bcrypt = require("bcrypt")
 
+class resMensagens {
     dadosSucesso(res, message) {
         res.status(200).json(message)
     }
@@ -29,8 +30,33 @@ class resMensagens {
     }
 }
 
+class Servico {
+    verificarEmail(email) {
+        const emailValido = /\S+@\S+\.\S+/
+        return emailValido.test(email)
+    }
+
+    checkarSenha(senhaAtual, senhaBanco) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const senha = await bcrypt.compare(senhaAtual, senhaBanco)
+                resolve(senha)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    async criptografarSenha(senha) {
+        const criptografiaSenhaSalt = await bcrypt.genSalt(12)
+        const criptografiaSenhaHash = await bcrypt.hash(senha, criptografiaSenhaSalt)
+        return criptografiaSenhaHash
+    }
+}
+
 const mensagens = {
     emailUtilizado: "Por favor, utilize outro e-mail",
+    nomeUtilizado: "Por favor, utilize outro nome",
     userCriadoComSucesso: "Usuário criado com sucesso!",
     errorNoServidor: "Aconteceu um erro no servidor, tente novamente mais tarde!",
     nome: "Por favor, informe um nome!",
@@ -56,6 +82,7 @@ const mensagens = {
     usuarioSemPontuacao: "Usuário não tem nenhuma pontuação!",
     idInformado: "Id informado é inválido!",
     pontuacaoAtualizada: "Pontuação atualizada com sucesso",
+    pontuacaoCadastrada: "Pontuação cadastrada",
     atividadeNivel: "Por favor, informe uma atividade",
     variaveisNivel: "Por favor, informe suas variaveis",
     dificuldadeNivel: "Por favor, informe qual será a dificuldade da sua ativadade de 1 à 3",
@@ -66,7 +93,11 @@ const mensagens = {
     problemaNaCriacaoNivel: "Ops: encontramos algum problema na criação do seu nível, por favor, entrem em contato com o administrador",
     idNivel: "Id do nível não informado",
     idNivelNaoEncontrado: "Id informado não foi encontrado",
-    todosNiveis: "Houve algum problema em buscar todos os níveis. Por favor contate o administrador."
+    todosNiveis: "Houve algum problema em buscar todos os níveis. Por favor contate o administrador.",
+    apenasAdmins: "Ops. você não tem permissão para acessar está página!",
+    emailOuNomeNaoInformado: "Por favor, informe um nome ou e-mail",
+    usuarioExcluido: "Usuário foi excluido com sucesso",
+    nivelAprovado: "Nível aprovado com sucesso"
 }
 
-module.exports = { resMensagens, mensagens }
+module.exports = { resMensagens, Servico, mensagens }

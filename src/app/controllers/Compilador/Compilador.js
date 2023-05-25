@@ -1,5 +1,5 @@
 const { resMensagens } = require("../../services/util")
-const { dadosSucesso, dadosNaoEncontrado } = new resMensagens()
+const { dadosSucesso, dadosNaoEncontrado, errorNoServidor } = new resMensagens()
 
 class TabelaDaVerdade {
     constructor() {
@@ -7,7 +7,7 @@ class TabelaDaVerdade {
         this.expressoes = []
     }
 
-    resultado = (req, res) => {
+    resultado = async (req, res) => {
         try {
             const { expressaoCorreta, expressao, variaveis } = req.body
 
@@ -23,10 +23,10 @@ class TabelaDaVerdade {
                 return dadosNaoEncontrado(res, "Campo variaveis vazio!")
             }
 
-            dadosSucesso(res, this.porcentagemDeAcertos(expressaoCorreta, variaveis, expressao))
+            dadosSucesso(res, await this.porcentagemDeAcertos(expressaoCorreta, variaveis, expressao))
         } catch (error) {
-            res.status(500)
-            throw new Error(error)
+            const mensagem = `Ops, deu algo de errado na compilação. ${error}`
+            return errorNoServidor(res, { message: mensagem })
         }
     }
 
@@ -60,6 +60,29 @@ class TabelaDaVerdade {
         return this.montarTabelaDaVerdade(copiaVariavel, expressions, rows)
     }
 
+    verificarExpressao(expressao) {//verificar se existe 2 expressoes uma do lado da outra.
+        return new Promise((resolve, reject) => {
+            let copiaExpressao = expressao
+            const removerOperadoresLogicos = ["(", ")", "||", "&&", "~"]
+    
+            removerOperadoresLogicos.forEach(operadores => {
+                copiaExpressao = copiaExpressao.replaceAll(operadores, ",")
+            })
+    
+            const removerEspacoVazio = copiaExpressao.split(",").filter((i) => {
+                return i
+            });
+    
+            removerEspacoVazio.forEach(verificar => {
+                if(verificar.length > 1) {
+                    return reject()
+                } else {
+                    resolve()
+                }
+            })
+        })
+    }
+
     montarTabelaDaVerdade = (copiaVariavel, expressions, rows) => {
         this.variaveis = []
         this.expressoes = []
@@ -70,13 +93,20 @@ class TabelaDaVerdade {
           this.expressoes.push(...expressions.map(cell))
         }
 
-        return { variaveis: this.variaveis, expressoes: this.expressoes }
+        return { resultado: this.variaveis, expressoes: this.expressoes, variaveis: copiaVariavel }
     }
 
     porcentagemDeAcertos = (expressaoCorreta, variaveis, expressaoUsuario) => {
-        const resultadoCorreto = this.compilador(variaveis, expressaoCorreta)
-        const resultadoUsuario = this.compilador(variaveis, expressaoUsuario)
-        return Object.assign({}, resultadoUsuario, this.calcularPorcentagemDeAcerto(resultadoCorreto, resultadoUsuario, expressaoUsuario, expressaoCorreta))
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.verificarExpressao(expressaoUsuario)
+                const resultadoCorreto = this.compilador(variaveis, expressaoCorreta)
+                const resultadoUsuario = this.compilador(variaveis, expressaoUsuario)
+                resolve(Object.assign({}, resultadoUsuario, this.calcularPorcentagemDeAcerto(resultadoCorreto, resultadoUsuario, expressaoUsuario, expressaoCorreta)))
+            } catch (error) {
+                reject("A sequência informada não pode conter duas variáveis seguidas!")
+            }
+        })
     }
 
     calcularPorcentagemDeAcerto = (resultadoUser, resultadoCorreto, expressaoUsuario, expressaoCorreta) => {
@@ -89,8 +119,8 @@ class TabelaDaVerdade {
             }
         })
 
-        resultadoUser.variaveis.forEach((resultado, index) => {
-            if(resultado === resultadoCorreto.variaveis[index]) {
+        resultadoUser.resultado.forEach((resultado, index) => {
+            if(resultado === resultadoCorreto.resultado[index]) {
                 pontuacaoVariaveis++
             }
         })
@@ -105,7 +135,7 @@ class TabelaDaVerdade {
             }
         })
 
-        return { porcentagemDeAcertosUsuario: Math.round((pontuacaoExpressao + pontuacaoVariaveis + pontuacaoTotalFeitaUsuario) * 100 / (resultadoCorreto.expressoes.length + resultadoCorreto.variaveis.length + pontuacaoExpressaoCorreta.length)) }
+        return { porcentagemDeAcertosUsuario: Math.round((pontuacaoExpressao + pontuacaoVariaveis + pontuacaoTotalFeitaUsuario) * 100 / (resultadoCorreto.expressoes.length + resultadoCorreto.resultado.length + pontuacaoExpressaoCorreta.length)) }
     }
 }
 

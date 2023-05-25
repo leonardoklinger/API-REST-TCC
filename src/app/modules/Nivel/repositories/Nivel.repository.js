@@ -15,7 +15,29 @@ class nivelRepository {
     buscarTodosNiveis = async () => {
         return new Promise(async (resolve, reject) => {
             try {
-                resolve(await NivelModel.find())
+                resolve(await NivelModel.find({ ativo: true }))
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    buscarNivelPorDificuldade = async (dificuldade) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const nivelPorDificuldade = await NivelModel.find({ dificuldade: dificuldade, ativo: true })
+                resolve(nivelPorDificuldade)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    buscarTodosNiveisParaSerAprovados = async () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const naoAprovados = await NivelModel.find({ ativo: false })
+                resolve(naoAprovados)
             } catch (error) {
                 reject(error)
             }
@@ -35,6 +57,26 @@ class nivelRepository {
         return new Promise(async (resolve, reject) => {
             try {
                 resolve(await nivelCadastrar.save())
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    excluirTodosNivelUsuario = async (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve(await NivelModel.deleteMany({ autor: id }))
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    aprovarNivelUsuario = async (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve(await NivelModel.updateOne({ _id: id }, { ativo: true }))
             } catch (error) {
                 reject(error)
             }

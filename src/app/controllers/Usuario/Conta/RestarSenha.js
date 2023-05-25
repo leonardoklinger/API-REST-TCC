@@ -1,7 +1,6 @@
 const { resetSenhaUsuario, buscarUsuarioEspecifico } = require("../../../modules/Usuarios/repositories/Usuario.repository")
 const { mensagens, resMensagens } = require("../../../services/util")
 const { enviadorEmail } = require("../../../services/Email/Email.services")
-const variaveis = require("../../../../config/Ambiente/start")
 const bcrypt = require("bcrypt")
 
 const tokenCriptografado = require("crypto")
@@ -60,7 +59,7 @@ class ResetarSenha extends UsuarioModelClass {
     }
 
     envioEmail = async (res, email, token, usuarioExistente) => {
-        await enviadorEmail(email, "resetSenha", `${variaveis.URL_FRONT_END}${token}`, "Você solicitou a redefinição de sua senha", `Olá ${usuarioExistente.nome}, você está precisando de ajuda com sua senha? Bem, click no botão abaixo para resetar sua senha \nOps: você tem 5 minutos para resetar a sua senha antes que o token fique inválido !`)
+        await enviadorEmail(email, "resetSenha", `http://localhost:8080/#/redefinirsenha/${token}`, "Você solicitou a redefinição de sua senha", `Olá ${usuarioExistente.nome}, você está precisando de ajuda com sua senha? Bem, click no botão abaixo para resetar sua senha \nOps: você tem 5 minutos para resetar a sua senha antes que o token fique inválido !`)
         return retornoMessage.dadosSucesso(res, mensagens.resetSenha)
     }
 }

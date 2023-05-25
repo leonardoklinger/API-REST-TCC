@@ -35,7 +35,7 @@ class Pontuacao {
     }
 
     cadastrarPontuacao = async (req, res) => {
-        const { level, porcentagemAcertos, idUser } = req.body
+        const { level, porcentagemAcertos } = req.body
 
         if (!level) {
             return dadosNecessarios(res, mensagens.informeUmLevel)
@@ -45,26 +45,38 @@ class Pontuacao {
             return dadosNecessarios(res, mensagens.informePorcentagemDeAcertos)
         }
 
-        if (!idUser) {
-            return dadosNecessarios(res, mensagens.idUser)
-        }
-
         try {
-            await buscarPontuacaoUser(idUser)
-            await updatePontuacaoUser(idUser, { level: level, porcentagemAcerto: porcentagemAcertos })
+            const pontuacaoUser = await buscarPontuacaoUser(req.userId)
+            const pontuacaoNovaUser = this.calcularPorcentagemDaPontuacao(pontuacaoUser, porcentagemAcertos)
+            await updatePontuacaoUser(req.userId, { level: level, porcentagemAcerto: porcentagemAcertos }, pontuacaoNovaUser)
             return retornoMessage.cadastroSucesso(res, mensagens.pontuacaoAtualizada)
         } catch (error) {
             if (!error) {
                 try {
-                    await cadastrarPontuacaoUser(idUser, { level: level, porcentagemAcerto: porcentagemAcertos })
-                    return retornoMessage.cadastroSucesso(res, mensagens.userCriadoComSucesso)
+                    await cadastrarPontuacaoUser(req.userId, { level: level, porcentagemAcerto: porcentagemAcertos }, porcentagemAcertos)
+                    return retornoMessage.cadastroSucesso(res, mensagens.pontuacaoCadastrada)
                 } catch (error) {
                     return retornoMessage.errorNoServidor(res, error)
                 }
             }
 
+            console.log(error);
             return retornoMessage.errorNoServidor(res, error)
         }
+    }
+
+    calcularPorcentagemDaPontuacao(pontuacao, porcentagemNova) {
+        let pontuacaoUser = [porcentagemNova]
+        pontuacao.level.forEach(({porcentagemAcerto}) => {
+            pontuacaoUser.push(porcentagemAcerto)
+        })
+
+        let pontuacaoTotalUser = 0
+        pontuacaoUser.forEach((resultado) => {
+            pontuacaoTotalUser += resultado / (pontuacaoUser.length)
+        })
+
+        return pontuacaoTotalUser.toFixed(2)
     }
 }
 

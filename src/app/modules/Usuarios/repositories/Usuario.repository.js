@@ -1,7 +1,17 @@
 const UsuarioModel = require("../model/Usuario.model")
 
 class usuarioRepository {
-    buscarUsuarioEspecifico = async (email) => {
+    buscarUsuarioEspecificoId = async (id) => {
+        let usuario = null
+        return new Promise(async (resolve, reject) => {
+            if (id) {
+                resolve(usuario = await UsuarioModel.findOne({ _id: id }))
+            }
+            reject(usuario)
+        })
+    }
+
+    buscarUsuarioEspecificoEmail = async (email) => {
         let usuario = null
         return new Promise(async (resolve, reject) => {
             if (email) {
@@ -11,11 +21,22 @@ class usuarioRepository {
         })
     }
 
-    criarNovoUsuario = async (nome, email, senha) => {
+    buscarUsuarioEspecificoNome = async (nome) => {
+        let usuario = null
+        return new Promise(async (resolve, reject) => {
+            if (nome) {
+                resolve(usuario = await UsuarioModel.findOne({ nome: nome }))
+            }
+            reject(usuario)
+        })
+    }
+
+    criarNovoUsuario = async (nome, email, senha, admin) => {
         const usuarioCadastrar = new UsuarioModel({
             nome,
             email,
-            senha: senha
+            senha: senha,
+            admin: admin
         })
 
         return new Promise(async (resolve, reject) => {
@@ -34,6 +55,47 @@ class usuarioRepository {
                 resolve(pegarDados)
             } catch (error) {
                 return reject(error)
+            }
+        })
+    }
+
+    editarInformacoesUsuario = (id, objeto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let dadosEditado = await UsuarioModel.findByIdAndUpdate({ _id: id }, objeto)
+                resolve(dadosEditado)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    buscarUsuarioEspecifico = async (email, nome) => {
+        let object = {}
+        if(nome) {
+            object = { nome: nome }
+        } else if(email) {
+            object = { email: email }
+        }
+
+        let usuario = null
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve(usuario = await UsuarioModel.findOne(object))
+            } catch (error) {
+                reject(usuario)
+            }
+        })
+    }
+
+    excluirContaUsuarioEspecifico = async (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if(id) {
+                    resolve(await UsuarioModel.deleteOne({ _id: id }))
+                }
+            } catch (error) {
+                reject(error)
             }
         })
     }

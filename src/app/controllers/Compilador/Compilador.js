@@ -9,7 +9,7 @@ class TabelaDaVerdade {
 
     resultado = async (req, res) => {
         try {
-            const { expressaoCorreta, expressao, variaveis } = req.body
+            const { expressaoCorreta, expressao } = req.body
 
             if (!expressaoCorreta) {
                 return dadosNaoEncontrado(res, "Campo expressaoCorreta vazio!")
@@ -19,34 +19,35 @@ class TabelaDaVerdade {
                 return dadosNaoEncontrado(res, "Campo expressao vazio!")
             }
 
-            if (!variaveis) {
-                return dadosNaoEncontrado(res, "Campo variaveis vazio!")
-            }
-
-            dadosSucesso(res, await this.porcentagemDeAcertos(expressaoCorreta, variaveis, expressao))
+            dadosSucesso(res, await this.porcentagemDeAcertos(expressaoCorreta, expressao))
         } catch (error) {
             const mensagem = `Ops, deu algo de errado na compilação. ${error}`
             return errorNoServidor(res, { message: mensagem })
         }
     }
 
-    compilador = (variaveis, expressao) => {
-        let copiaVariavel = variaveis.slice()
+    compilador = async (expressao) => {
+        const alfabeto = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
+        let variaveis = []
 
-        variaveis.forEach(variavel => {
-            if(!(expressao.includes(variavel))) {
-                copiaVariavel.splice(variaveis.indexOf(variavel), 1)
-            }
+        const variaveisColetadas = await this.verificarExpressao(expressao)
+        const removerItensRepetidos = variaveisColetadas.filter((item, index) => {
+            return variaveisColetadas.indexOf(item) === index
         })
+
+        removerItensRepetidos.forEach((_, index) => {
+            variaveis.push(alfabeto[index])
+        })
+
 
         const expressions = [expressao];
         const functionsByExpr = Object.fromEntries(expressions.map(expr =>
-          [expr, new Function(...copiaVariavel, `return ${expr};`)]
+          [expr, new Function(...variaveis, `return ${expr};`)]
         ));
         
         const rows = [];
-        for (let i = 0; i < (1 << copiaVariavel.length); i++) {
-          const entries = copiaVariavel.map((name, j) =>
+        for (let i = 0; i < (1 << variaveis.length); i++) {
+          const entries = variaveis.map((name, j) =>
             [name, (i >>> j) & 1 == 1]
           );
           const values = entries.map(e => e[1]);
@@ -57,7 +58,7 @@ class TabelaDaVerdade {
           rows.push(obj);
         }
         
-        return this.montarTabelaDaVerdade(copiaVariavel, expressions, rows)
+        return this.montarTabelaDaVerdade(variaveis, expressions, rows)
     }
 
     verificarExpressao(expressao) {//verificar se existe 2 expressoes uma do lado da outra.
@@ -77,7 +78,7 @@ class TabelaDaVerdade {
                 if(verificar.length > 1) {
                     return reject()
                 } else {
-                    resolve()
+                    resolve(removerEspacoVazio)
                 }
             })
         })
@@ -96,12 +97,12 @@ class TabelaDaVerdade {
         return { resultado: this.variaveis, expressoes: this.expressoes, variaveis: copiaVariavel }
     }
 
-    porcentagemDeAcertos = (expressaoCorreta, variaveis, expressaoUsuario) => {
+    porcentagemDeAcertos = async (expressaoCorreta, expressaoUsuario) => {
         return new Promise(async (resolve, reject) => {
             try {
                 await this.verificarExpressao(expressaoUsuario)
-                const resultadoCorreto = this.compilador(variaveis, expressaoCorreta)
-                const resultadoUsuario = this.compilador(variaveis, expressaoUsuario)
+                const resultadoCorreto = await this.compilador(expressaoCorreta)
+                const resultadoUsuario = await this.compilador(expressaoUsuario)
                 resolve(Object.assign({}, resultadoUsuario, this.calcularPorcentagemDeAcerto(resultadoCorreto, resultadoUsuario, expressaoUsuario, expressaoCorreta)))
             } catch (error) {
                 reject("A sequência informada não pode conter duas variáveis seguidas!")

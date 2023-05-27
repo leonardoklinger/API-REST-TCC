@@ -12,21 +12,36 @@ class nivelRepository {
         })
     }
 
-    buscarTodosNiveis = async () => {
+    buscarTodosNiveis = async (paginaAtual, quantidadeExibir) => {
         return new Promise(async (resolve, reject) => {
             try {
-                resolve(await NivelModel.find({ ativo: true }))
+                const totalNivel = await NivelModel.find({ ativo: true }).countDocuments()
+                const totalPagina = Math.ceil(totalNivel / quantidadeExibir)
+                
+                if (paginaAtual < 1 || paginaAtual > totalPagina) {
+                    reject("Número da página informado está inválido")
+                }
+
+                const nivel = await NivelModel.find({ ativo: true }).skip((paginaAtual - 1) * quantidadeExibir).limit(quantidadeExibir).exec()
+                resolve({Niveis: nivel, totalPagina})
             } catch (error) {
                 reject(error)
             }
         })
     }
 
-    buscarNivelPorDificuldade = async (dificuldade) => {
+    buscarNivelPorDificuldade = async (dificuldade, paginaAtual, quantidadeExibir) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const nivelPorDificuldade = await NivelModel.find({ dificuldade: dificuldade, ativo: true })
-                resolve(nivelPorDificuldade)
+                const totalNivel = await NivelModel.find({ dificuldade: dificuldade, ativo: true }).countDocuments()
+                const totalPagina = Math.ceil(totalNivel / quantidadeExibir)
+                
+                if (paginaAtual < 1 || paginaAtual > totalPagina) {
+                    reject("Número da página informado está inválido")
+                }
+
+                const nivel = await NivelModel.find({ dificuldade: dificuldade, ativo: true }).skip((paginaAtual - 1) * quantidadeExibir).limit(quantidadeExibir).exec()
+                resolve({Niveis: nivel, totalPagina})
             } catch (error) {
                 reject(error)
             }

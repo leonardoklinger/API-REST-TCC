@@ -36,20 +36,21 @@ class Login {
     
     buscarTodosNiveis = async (req, res) => {
         try {
-            let todosNiveis = await buscarTodosNiveis()
+            const { pagina } = req.query
+            let todosNiveis = await buscarTodosNiveis(pagina, 8)
             return retornoMessage.dadosSucesso(res, todosNiveis)
         } catch (error) {
-            return retornoMessage.dadosNaoEncontrado(res, { message: mensagens.todosNiveis })
+            return retornoMessage.dadosNaoEncontrado(res, { message: mensagens.todosNiveis, error: error  })
         }
     }
 
     buscarNivelPorDificuldade = async (req, res) => {
         try {
-            const { dificuldade } = req.query
-            let nivelPorDificuldade = await buscarNivelPorDificuldade(dificuldade)
+            const { dificuldade, pagina } = req.query
+            let nivelPorDificuldade = await buscarNivelPorDificuldade(dificuldade, pagina, 8)
             return retornoMessage.dadosSucesso(res, nivelPorDificuldade)
         } catch (error) {
-            return retornoMessage.dadosNaoEncontrado(res, { message: mensagens.todosNiveis })
+            return retornoMessage.dadosNaoEncontrado(res, { message: mensagens.todosNiveis, error: error })
         }
     }
 

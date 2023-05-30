@@ -39,7 +39,7 @@
    - [x] Compilador
       - [x] Gerar tabela da verdade
       - [x] Porcentagem de acertos
-   - [ ] Usuários
+   - [x] Usuários
       - [x] Login
         * JWT
         * MONGODB
@@ -50,13 +50,13 @@
         * JWT
         * REDIS
         * MONGODB
-      - [ ] Perfil
+      - [x] Perfil
         * Redis
         * MONGODB
       - [x] Criação de Níveis
         * MONGODB
    - [ ] Dashboard
-      - [ ] Top Ranks
+      - [x] Top Ranks
         * Redis
         * MONGODB
       - [ ] Posição atual
@@ -68,10 +68,10 @@
     - [x] Cadastro
     - [x] Resetar Senha
     - [x] Criação de Níveis
-    - [ ] Perfil
-    - [ ] Status
-    - [ ] Dashboard
-    - [ ] Top Ranks
+    - [x] Perfil
+    - [x] Status
+    - [x] Dashboard
+    - [x] Top Ranks
     - [ ] Posição atual
   - [x] Services
     - [x] Redis

@@ -23,7 +23,7 @@ class nivelRepository {
                 }
 
                 const nivel = await NivelModel.find({ ativo: true }).skip((paginaAtual - 1) * quantidadeExibir).limit(quantidadeExibir).exec()
-                resolve({Niveis: nivel, totalPagina})
+                resolve({ Niveis: nivel, totalPagina: totalPagina })
             } catch (error) {
                 reject(error)
             }
@@ -41,7 +41,7 @@ class nivelRepository {
                 }
 
                 const nivel = await NivelModel.find({ dificuldade: dificuldade, ativo: true }).skip((paginaAtual - 1) * quantidadeExibir).limit(quantidadeExibir).exec()
-                resolve({Niveis: nivel, totalPagina})
+                resolve({ Niveis: nivel, totalPagina: totalPagina })
             } catch (error) {
                 reject(error)
             }

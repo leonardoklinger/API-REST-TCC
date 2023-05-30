@@ -4,12 +4,11 @@ const retornoMessage = new resMensagens()
 
 class Pontuacao {
     pontuacao = async (req, res) => {
-        const { idUser } = req.params
 
-        if (!idUser) return retornoMessage.dadosNecessarios(res, mensagens.idUser)
+        if (!req.userId) return retornoMessage.dadosNecessarios(res, mensagens.idUser)
 
         try {
-            const pontuacaoExistente = await buscarPontuacaoUser(idUser)
+            const pontuacaoExistente = await buscarPontuacaoUser(req.userId)
             const { level } = pontuacaoExistente
             const dadosNaoDuplicados = []
             level.forEach(element => dadosNaoDuplicados.push(element.level))
@@ -60,7 +59,6 @@ class Pontuacao {
                 }
             }
 
-            console.log(error);
             return retornoMessage.errorNoServidor(res, error)
         }
     }

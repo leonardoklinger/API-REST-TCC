@@ -2,7 +2,7 @@ const { mensagens, resMensagens } = require("../../../app/services/util")
 const { criarNovoNivel, buscarNivelEspecifico, buscarTodosNiveis, buscarNivelPorDificuldade, buscarTodosNiveisParaSerAprovados, aprovarNivelUsuario } = require("../../../app/modules/Nivel/repositories/Nivel.repository")
 const retornoMessage = new resMensagens()
 
-class Login {
+class Nivel {
     criarNivel = async (req, res) => {
         const { atividade, variaveis, dificuldade, sequenciaCorreta } = req.body
 
@@ -74,4 +74,4 @@ class Login {
     }
 }
 
-module.exports = new Login()
+module.exports = new Nivel()

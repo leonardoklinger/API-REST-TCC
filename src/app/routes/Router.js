@@ -20,10 +20,8 @@ const {
      editarInformacoesUsuario
     } = require("../controllers")
 const { VerificarToken, VerificarPermissao } = require("../middleware/Usuario.middleware")
-const cors = require("cors")
 
 const router = Router()
-router.options('*', cors())
 router.post("/login", login)
 router.post("/registrar", registrar)
 router.get("/resetarSenha", gerarUrl)

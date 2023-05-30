@@ -8,6 +8,7 @@ class TabelaDaVerdade {
     }
 
     resultado = async (req, res) => {
+        res.setHeader("Access-Control-Allow-Origin", "*")
         try {
             const { expressaoCorreta, expressao } = req.body
 

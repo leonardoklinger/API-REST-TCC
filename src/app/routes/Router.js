@@ -17,7 +17,10 @@ const {
      excluirContaUsuarioEspecifico,
      buscarTodosNiveisParaSerAprovados,
      aprovarNivel,
-     editarInformacoesUsuario
+     naoAprovarNivelUsuario,
+     editarInformacoesUsuario,
+     buscarUsuarioPorId,
+     checkarConta
     } = require("../controllers")
 const { VerificarToken, VerificarPermissao } = require("../middleware/Usuario.middleware")
 
@@ -35,12 +38,15 @@ router.post("/criarNivel", VerificarToken, criarNivel)
 router.get("/buscarNivelEspecifico", VerificarToken, buscarNivelEspecifico)
 router.get("/buscarTodosNiveis", VerificarToken, buscarTodosNiveis)
 router.get("/buscarNivelPorDificuldade", VerificarToken, buscarNivelPorDificuldade)
+router.get("/buscarUsuarioPorId", VerificarToken, buscarUsuarioPorId)
+router.get("/checkarConta", VerificarToken, checkarConta)
 
 //Administrador
 router.get("/buscarTodosNiveisParaSerAprovados", VerificarPermissao, buscarTodosNiveisParaSerAprovados)
 router.get("/buscarUsuario", VerificarPermissao, buscarUsuarioEspecifico)
 router.delete("/excluirContaUsuario", VerificarPermissao, excluirContaUsuarioEspecifico)
 router.put("/aprovarNivelUsuario", VerificarPermissao, aprovarNivel)
+router.put("/naoAprovarNivelUsuario", VerificarPermissao, naoAprovarNivelUsuario)
 router.put("/editarInformacoesUsuario", VerificarPermissao, editarInformacoesUsuario)
 
 module.exports = {

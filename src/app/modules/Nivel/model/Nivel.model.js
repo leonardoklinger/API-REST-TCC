@@ -5,7 +5,7 @@ const Schema = new mongoose.Schema({
     variaveis: { type: Array },
     dificuldade: { type: Number },
     sequenciaCorreta: { type: String },
-    autor: { type: String },
+    autor: { type: mongoose.Schema.Types.ObjectId },
     ativo: { type: Boolean }
 })
 

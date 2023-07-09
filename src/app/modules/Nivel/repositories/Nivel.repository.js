@@ -1,4 +1,5 @@
 const NivelModel = require("../model/Nivel.model")
+const { Types } = require("mongoose")
 
 class nivelRepository {
     buscarNivelEspecifico = async (id) => {
@@ -48,11 +49,39 @@ class nivelRepository {
         })
     }
 
-    buscarTodosNiveisParaSerAprovados = async () => {
+    buscarTodosNiveisParaSerAprovados = async (paginaAtual, quantidadeExibir) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const naoAprovados = await NivelModel.find({ ativo: false })
-                resolve(naoAprovados)
+                const totalNivelParaSerAprovado = await NivelModel.find({ ativo: false }).countDocuments()
+                const totalPagina = Math.ceil(totalNivelParaSerAprovado / quantidadeExibir)
+                
+                if (paginaAtual < 1 || paginaAtual > totalPagina) {
+                    reject("Número da página informado está inválido")
+                }
+
+                const niveisNaoAprovados = await NivelModel.aggregate([
+                    { $lookup: 
+                        {
+                            from: "usuarios", 
+                            localField: "autor", 
+                            foreignField: "_id", 
+                            as: "usuario"
+                        }
+                    },
+                    { $match: { "ativo": false }},
+                    { $project: {  
+                            _id: 1, 
+                            atividade: 1, 
+                            variaveis: 1,
+                            dificuldade: 1, 
+                            sequenciaCorreta: 1, 
+                            ativo: 1, 
+                            usuario: { nome: 1 } 
+                        } 
+                    }
+                ]).skip((paginaAtual  - 1) * quantidadeExibir).limit(quantidadeExibir).exec()
+                
+                resolve({ Niveis: niveisNaoAprovados, totalPagina: totalPagina })
             } catch (error) {
                 reject(error)
             }
@@ -92,6 +121,16 @@ class nivelRepository {
         return new Promise(async (resolve, reject) => {
             try {
                 resolve(await NivelModel.updateOne({ _id: id }, { ativo: true }))
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    naoAprovarNivelUsuario = async (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve(await NivelModel.findByIdAndDelete({ _id: id }))
             } catch (error) {
                 reject(error)
             }

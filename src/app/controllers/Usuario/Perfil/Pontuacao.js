@@ -24,7 +24,7 @@ class Pontuacao {
                     soma += (dados[i].porcentagemAcerto / dados.length)
                 }
 
-                dadosAtualizados.push({ level: element, porcentagemAcerto: `${Math.round(soma)}%`, jogadas: dados.length })
+                dadosAtualizados.push({ level: element, porcentagemAcerto: Math.round(soma), jogadas: dados.length })
             })
 
             return retornoMessage.dadosSucesso(res, dadosAtualizados)

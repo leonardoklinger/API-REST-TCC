@@ -1,5 +1,13 @@
 const { mensagens, resMensagens } = require("../../../app/services/util")
-const { criarNovoNivel, buscarNivelEspecifico, buscarTodosNiveis, buscarNivelPorDificuldade, buscarTodosNiveisParaSerAprovados, aprovarNivelUsuario } = require("../../../app/modules/Nivel/repositories/Nivel.repository")
+const { 
+    criarNovoNivel, 
+    buscarNivelEspecifico, 
+    buscarTodosNiveis, 
+    buscarNivelPorDificuldade, 
+    buscarTodosNiveisParaSerAprovados, 
+    aprovarNivelUsuario,
+    naoAprovarNivelUsuario
+} = require("../../../app/modules/Nivel/repositories/Nivel.repository")
 const retornoMessage = new resMensagens()
 
 class Nivel {
@@ -56,7 +64,8 @@ class Nivel {
 
     buscarTodosNiveisParaSerAprovados = async (req, res) => {
         try {
-            const niveisNaoAprovados = await buscarTodosNiveisParaSerAprovados()
+            const { pagina } = req.query
+            const niveisNaoAprovados = await buscarTodosNiveisParaSerAprovados(pagina, 8)
             return retornoMessage.dadosSucesso(res, niveisNaoAprovados)
         } catch (error) {
             return retornoMessage.errorNoServidor(res, error)
@@ -68,6 +77,16 @@ class Nivel {
         try {
             await aprovarNivelUsuario(id)
             return retornoMessage.dadosSucesso(res, mensagens.nivelAprovado)
+        } catch (error) {
+            return retornoMessage.errorNoServidor(res, error)
+        }
+    }
+
+    naoAprovarNivelUsuario = async (req, res) => {
+        const { id } = req.body
+        try {
+            await naoAprovarNivelUsuario(id)
+            return retornoMessage.dadosSucesso(res, mensagens.nivelReprovado)
         } catch (error) {
             return retornoMessage.errorNoServidor(res, error)
         }

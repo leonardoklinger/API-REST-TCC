@@ -97,7 +97,9 @@ const mensagens = {
     apenasAdmins: "Ops. você não tem permissão para acessar está página!",
     emailOuNomeNaoInformado: "Por favor, informe um nome ou e-mail",
     usuarioExcluido: "Usuário foi excluido com sucesso",
-    nivelAprovado: "Nível aprovado com sucesso"
+    nivelAprovado: "Nível aprovado com sucesso",
+    nivelReprovado: "Nível do usuário foi reprovado com sucesso",
+    dadosEditados: "Dados editados com sucesso."
 }
 
 module.exports = { resMensagens, Servico, mensagens }

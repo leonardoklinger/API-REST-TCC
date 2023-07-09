@@ -40,13 +40,22 @@ class pontuacaoRepository {
                         as: "users"
                     }
                 },
-                { $project: { quantidadeJogos: { $size: '$level' }, pontuacao: 1, _id: 1, users: { nome: 1 } } },
+                { $project: { 
+                        quantidadeJogos: { $size: '$level' }, 
+                        pontuacao: 1, 
+                        _id: 1, 
+                        users: { nome: 1 } ,
+                    } 
+                }
             ])
 
-            if (dados) {
-                resolve(dados)
+            if (dados.length) {
+                const procurarJogador = await PontuacaoUser.find().sort({ pontuacao: 1, quantidadeJogos: 1 })
+                const rank = procurarJogador.findIndex(j => j._id.equals(_id))
+                resolve(Object.assign({}, dados[0], { rankAtual: rank+1 }))
+            } else {
+                reject(dados)
             }
-            reject(dados)
         })
     }
 }

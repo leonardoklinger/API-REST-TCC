@@ -1,27 +1,42 @@
 const { cadastrarLog, buscarLog, updateLog } = require("../../modules/Administrador/repositories/UserAdministrador.repository")
-const { buscarUsuarioEspecificoId, buscarUsuarioEspecifico, buscarUsuarioEspecificoEmail, buscarUsuarioEspecificoNome, editarInformacoesUsuario, excluirContaUsuarioEspecifico } = require("../../modules/Usuarios/repositories/Usuario.repository")
+const { 
+    buscarUsuarioEspecificoId, 
+    buscarUsuarioEspecifico, 
+    buscarUsuarioEspecificoEmail, 
+    buscarUsuarioEspecificoNome, 
+    editarInformacoesUsuario, 
+    excluirContaUsuarioEspecifico } = require("../../modules/Usuarios/repositories/Usuario.repository")
 const { excluirUsuarioPontuacao } = require("../../modules/Usuarios/repositories/PontuacaoUser.repository")
 const { excluirTodosNivelUsuario } = require("../../modules/Nivel/repositories/Nivel.repository")
+const redis = require("../../Cache/redis")
 const { mensagens, resMensagens, Servico } = require("../../services/util")
 const retornoMessage = new resMensagens()
 const servico = new Servico()
 
 class Admin {
     buscarUsuarioEspecifico = async (req, res) => {
-        const { email, nome } = req.query
+        const { usuario, pagina } = req.query
 
-        if(!email && !nome) {
-            return retornoMessage.dadosNecessarios(res, mensagens.emailOuNomeNaoInformado)
-        }
+        let tipoDado = {}
 
-        if(email) {
-            if(!servico.verificarEmail(email)) {
-                return retornoMessage.dadosNecessarios(res, mensagens.emailInvalido)
-            }
+        if(servico.verificarEmail(usuario)) {
+            tipoDado = { email: usuario }
+        } else if(tipoDado) {
+            tipoDado = { nome: usuario }
         }
 
         try {
-            const dados = await buscarUsuarioEspecifico(email, nome)
+            const dados = await buscarUsuarioEspecifico(tipoDado, pagina, 8)
+            return retornoMessage.dadosSucesso(res, dados)
+        } catch (error) {
+            return retornoMessage.dadosNaoEncontrado(res, mensagens.usuarioNaoEncontrado)
+        }
+    }
+
+    buscarUsuarioPorId = async (req, res) => {
+        const { id } = req.query
+        try {
+            const dados = await buscarUsuarioEspecificoId(id)
             return retornoMessage.dadosSucesso(res, dados)
         } catch (error) {
             return retornoMessage.dadosNaoEncontrado(res, mensagens.usuarioNaoEncontrado)
@@ -29,7 +44,7 @@ class Admin {
     }
 
     excluirContaUsuarioEspecifico = async (req, res) => {
-        const { id } = req.body
+        const { id } = req.query
 
         if(!id) {
             return retornoMessage.dadosNecessarios(res, mensagens.idUser)
@@ -40,7 +55,7 @@ class Admin {
             const informacaoUsuario = await buscarUsuarioEspecificoId(id)
             await excluirUsuarioPontuacao(id)
             await excluirTodosNivelUsuario(id)
-            
+            await redis.deletar(id)
             const dados = await excluirContaUsuarioEspecifico(id)
             
             if(dados.deletedCount > 0) {
@@ -56,44 +71,53 @@ class Admin {
 
     editarInformacoesUsuario = async (req, res) => {
         const informacoesParaSerEnviadas = ["nome", "senha", "email", "admin"]
-        const informacoes = {}
-        let informacoesUtilizadas = []
+        const informacoesAtualizadas = {}
         const { id } = req.body
+        
+        const dadosAntigos = await buscarUsuarioEspecificoId(id)
 
         const carregarInformacoes = informacoesParaSerEnviadas.map(async (info) => {
-            if(req.body[info]) {
-                if(info == "senha") {
-                    informacoes[info] = await servico.criptografarSenha(req.body[info])
-                } else  if(info == "nome" || info == "email") {
-                    const email = await buscarUsuarioEspecificoEmail(req.body[info])
-                    const nome = await buscarUsuarioEspecificoNome(req.body[info])
-                    
-                    if(email) {
-                        return informacoesUtilizadas.push("emailUtilizado")
-                    } else if(nome) {
-                        return informacoesUtilizadas.push("nomeUtilizado")
-                    }
-                     informacoes[info] = req.body[info]
-                } else {
-                    informacoes[info] = req.body[info]
-                }
+            if(req.body[info] !== dadosAntigos[info]) {
+                informacoesAtualizadas[info] = req.body[info]
+            }
+        })
+
+        const informacoes = Object.keys(informacoesAtualizadas).map(async (dadosNovo) => {
+            switch (dadosNovo) {
+                case "email":
+                    const email = await buscarUsuarioEspecificoEmail(informacoesAtualizadas[dadosNovo])
+                    if(email) return delete informacoesAtualizadas.email
+                    break;
+
+                case "nome":
+                    const nome = await buscarUsuarioEspecificoNome(informacoesAtualizadas[dadosNovo])
+                    if(nome) delete informacoesAtualizadas.nome
+                    break;
+
+                case "senha":
+                    informacoesAtualizadas.senha = await servico.criptografarSenha(informacoesAtualizadas[dadosNovo])
+                    break;
+                default:
+                    break;
             }
         })
 
         await Promise.all(carregarInformacoes)
+        await Promise.all(informacoes)
 
-        if(informacoesUtilizadas.length) {
-            return retornoMessage.dadosNecessarios(res, informacoesUtilizadas.map(info => mensagens[info]).toString())
-        }
 
-        try {
-            const informacaoAdmin = await buscarUsuarioEspecificoId(req.userId)
-            const dadosAntigos = await editarInformacoesUsuario(id, informacoes)
-            const dadosReformulados = this.dadosReformulados(dadosAntigos, informacoes, Object.keys(informacoes))
-            this.cadastrarLogAdmin(id, { admin: req.userId, mensagem: `Administrador:${informacaoAdmin.nome} | editou as seguintes informações do usuário ${id} -> ${Object.keys(informacoes)}` })
-            return retornoMessage.dadosSucesso(res, dadosReformulados)
-        } catch (error) {
-            return retornoMessage.errorNoServidor(res, error)
+        if(informacoesAtualizadas) {
+            const dadosAtualizados = await editarInformacoesUsuario(id, informacoesAtualizadas)
+            if(!dadosAtualizados) return retornoMessage.dadosNaoEncontrado(res, mensagens.usuarioNaoEncontrado)
+    
+            try {
+                const informacaoAdmin = await buscarUsuarioEspecificoId(req.userId)
+                this.cadastrarLogAdmin(id, { admin: req.userId, mensagem: `Administrador:${informacaoAdmin.nome} | editou as seguintes informações do usuário ${id} -> ${Object.keys(informacoesAtualizadas)}` })
+                return retornoMessage.dadosSucesso(res, mensagens.dadosEditados)
+            } catch (error) {
+                console.log(error);
+                return retornoMessage.errorNoServidor(res, error)
+            }
         }
     }
 
@@ -111,15 +135,6 @@ class Admin {
                 reject(error)
             }
         })
-    }
-
-    dadosReformulados = (dadosAntigos, dados, informacoesEditadas) => {
-        const dadosNovos = dadosAntigos
-        informacoesEditadas.map(resultado => {
-            dadosNovos[resultado] = dados[resultado]
-        })
-
-        return dadosNovos
     }
 }
 

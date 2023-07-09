@@ -5,7 +5,7 @@ class usuarioRepository {
         let usuario = null
         return new Promise(async (resolve, reject) => {
             if (id) {
-                resolve(usuario = await UsuarioModel.findOne({ _id: id }))
+                resolve(usuario = await UsuarioModel.findById(id))
             }
             reject(usuario)
         })
@@ -70,18 +70,27 @@ class usuarioRepository {
         })
     }
 
-    buscarUsuarioEspecifico = async (email, nome) => {
+    buscarUsuarioEspecifico = async (tipo, paginaAtual, quantidadeExibir) => {
         let object = {}
-        if(nome) {
-            object = { nome: nome }
-        } else if(email) {
-            object = { email: email }
+        if(tipo.nome) {
+            object = { nome: {$regex: new RegExp('.*' + tipo.nome + '.*', 'i')} }
+        } else if(tipo.email) {
+            object = { email: tipo.email }
         }
 
         let usuario = null
         return new Promise(async (resolve, reject) => {
             try {
-                resolve(usuario = await UsuarioModel.findOne(object))
+                const totalDeItens = await UsuarioModel.find(object).countDocuments()
+                const totalPagina = Math.ceil(totalDeItens / quantidadeExibir)
+
+                if (paginaAtual < 1 || paginaAtual > totalPagina) {
+                    reject("Número da página informado está inválido")
+                }
+
+                let usuarioBuscar = await UsuarioModel.find(object).skip((paginaAtual - 1) * quantidadeExibir).limit(quantidadeExibir).exec()
+
+                resolve(usuario = { usuarios: usuarioBuscar, totalPagina: totalPagina })
             } catch (error) {
                 reject(usuario)
             }

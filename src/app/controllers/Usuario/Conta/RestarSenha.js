@@ -59,7 +59,7 @@ class ResetarSenha extends UsuarioModelClass {
     }
 
     envioEmail = async (res, email, token, usuarioExistente) => {
-        await enviadorEmail(email, "resetSenha", `http://localhost:8080/#/redefinirsenha/${token}`, "Você solicitou a redefinição de sua senha", `Olá ${usuarioExistente.nome}, você está precisando de ajuda com sua senha? Bem, click no botão abaixo para resetar sua senha \nOps: você tem 5 minutos para resetar a sua senha antes que o token fique inválido !`)
+        await enviadorEmail(email, "resetSenha", `${process.env.URL_FRONT_END}${token}`, "Você solicitou a redefinição de sua senha", `Olá ${usuarioExistente.nome}, você está precisando de ajuda com sua senha? Bem, click no botão abaixo para resetar sua senha \nOps: você tem 5 minutos para resetar a sua senha antes que o token fique inválido !`)
         return retornoMessage.dadosSucesso(res, mensagens.resetSenha)
     }
 }

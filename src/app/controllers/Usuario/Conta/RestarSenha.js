@@ -1,4 +1,4 @@
-const { resetSenhaUsuario, buscarUsuarioEspecifico } = require("../../../modules/Usuarios/repositories/Usuario.repository")
+const { resetSenhaUsuario, buscarUsuarioEspecificoEmail } = require("../../../modules/Usuarios/repositories/Usuario.repository")
 const { mensagens, resMensagens } = require("../../../services/util")
 const { enviadorEmail } = require("../../../services/Email/Email.services")
 const bcrypt = require("bcrypt")
@@ -16,7 +16,7 @@ class ResetarSenha extends UsuarioModelClass {
         const validacao = this.validacoes(true, email, true, true, mensagens)
         if (validacao) return retornoMessage.dadosNaoEncontrado(res, validacao)
 
-        const usuarioExistente = await buscarUsuarioEspecifico(email)
+        const usuarioExistente = await buscarUsuarioEspecificoEmail(email)
         if (!usuarioExistente) return retornoMessage.dadosNaoEncontrado(res, mensagens.emailNaoEncontrado)
 
         try {
@@ -44,7 +44,7 @@ class ResetarSenha extends UsuarioModelClass {
             const dados = await redis.buscar(token)
             const criptografiaSenhaSalt = await bcrypt.genSalt(12)
             const criptografiaSenhaHash = await bcrypt.hash(senha, criptografiaSenhaSalt)
-            let dadosUser = await buscarUsuarioEspecifico(dados.email)
+            let dadosUser = await buscarUsuarioEspecificoEmail(dados.email)
             if (!dadosUser) return dadosNaoEncontrado(res, mensagens.emailInvalido)
 
             resetSenhaUsuario(dadosUser._id, criptografiaSenhaHash).then(async result => {

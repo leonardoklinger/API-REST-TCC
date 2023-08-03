@@ -44,8 +44,8 @@ class Login extends UsuarioModelClass {
                 expiresIn: "10h"
             })
 
-            await redis.setar(usuarioExistente._id, { token: token, admin: usuarioAdmin, id: usuarioExistente._id, nome: usuarioExistente.nome }, 10 * 60 * 60)
             if(!(await redis.buscar(usuarioExistente._id))) {
+                await redis.setar(usuarioExistente._id, { token: token, admin: usuarioAdmin, id: usuarioExistente._id, nome: usuarioExistente.nome }, 10 * 60 * 60)
             }
             
             return retornoMessage.dadosSucesso(res, { 

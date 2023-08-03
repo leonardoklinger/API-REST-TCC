@@ -19,15 +19,15 @@ class Registrar extends UsuarioModelClass {
         const criptografiaSenhaHash = await bcrypt.hash(senha, criptografiaSenhaSalt)
 
         if (usuarioExistenteEmail) {
-            return retornoMessage.dadosNaoEncontrado(res, mensagens.emailUtilizado)
+            return retornoMessage.naoAutorizado(res, mensagens.emailUtilizado)
         }
 
         if (usuarioExistenteNome) {
-            return retornoMessage.dadosNaoEncontrado(res, mensagens.nomeUtilizado)
+            return retornoMessage.naoAutorizado(res, mensagens.nomeUtilizado)
         }
 
         if(!servico.verificarEmail(email)) {
-            return retornoMessage.dadosNecessarios(res, mensagens.emailInvalido)
+            return retornoMessage.naoAutorizado(res, mensagens.emailInvalido)
         }
 
         try {
